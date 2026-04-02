@@ -1,0 +1,15 @@
+# Ignorar o ambiente virtual
+fidc-insight-mvp-env/
+
+# Ignorar arquivos de banco de dados locais pesados
+database/
+*.db
+*.sqlite
+*.sqlite3
+
+# Ignorar credenciais e senhas
+.env
+
+# Ignorar arquivos de cache do Python (boa prática)
+__pycache__/
+*.pyc
