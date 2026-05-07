@@ -369,24 +369,14 @@ function renderCedente(){
         </div>
       </div>
       <div class="panel">
-        <div class="panel-title">Índices médios dos pagadores</div>
-        <div class="panel-subtitle">Médias consolidadas de todos os pagadores com dados na base</div>
-        ${[
-          {label:'Liquidez sacado (1m)',val:stats.liq,max:2,color:'#0bc5ea'},
-          {label:'Liq. quantitativa (3m)',val:stats.liqQ,max:2,color:'#9f7aea'},
-          {label:'Score materialidade v2',val:stats.mat,max:1,color:'#48bb78'},
-          {label:'Score quantidade v2',val:stats.qtd,max:1,color:'#1a56db'},
-          {label:'Mat. evolução',val:stats.matEvol,max:1,color:'#ed8936'},
-          {label:'Inadimplência (inv.)',val:1-Math.min(1,stats.inad),max:1,color:stats.inad>0.2?'#f56565':stats.inad>0.1?'#ed8936':'#48bb78'},
-        ].map(b=>{
-          const pct=Math.min(100,(b.val/b.max)*100);
-          return`<div class="prog-row">
-            <div class="prog-label">${b.label}</div>
-            <div class="prog-track"><div class="prog-fill" style="width:${pct.toFixed(0)}%;background:${b.color}">${pct.toFixed(0)}%</div></div>
-            <div class="prog-val" style="color:${b.color}">${b.val.toFixed(2)}</div>
-          </div>`;
-        }).join('')}
-        <div class="info-note">* Inadimplência exibida invertida (maior barra = menor inadimplência)</div>
+        <div class="panel-title">Cedente selecionado vs média geral</div>
+        <div class="panel-subtitle">Índices médios dos pagadores · comparativo com todos os cedentes da base</div>
+        <div style="display:flex;gap:16px;margin-bottom:10px;font-size:11px;color:#718096">
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:2px;background:#378ADD;display:inline-block"></span>Cedente selecionado</span>
+          <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(136,135,128,.45);display:inline-block"></span>Média geral</span>
+        </div>
+        <div style="position:relative;width:100%;height:220px"><canvas id="chart-comp" role="img" aria-label="Comparativo de índices do cedente versus média geral"></canvas></div>
+        <div class="info-note" style="margin-top:8px">* Valores normalizados de 0–100 para comparação. Inadimplência e atraso exibidos invertidos (maior = melhor).</div>
       </div>
     </div>
 
@@ -404,7 +394,7 @@ function renderCedente(){
         <table>
           <thead><tr>
             <th>ID Boleto</th><th>Pagador (devedor)</th><th>Emissão</th><th>Vencimento</th><th>Pagamento</th>
-            <th style="text-align:right">Vlr Nominal</th><th>Tipo baixa</th><th>Liq. pagador</th><th>Atraso pagador</th><th>Inad. pagador</th>
+            <th style="text-align:right">Vlr Nominal</th><th>Tipo baixa</th><th style="text-align:center">Dias de atraso</th>
           </tr></thead>
           <tbody id="tbl-boletos"></tbody>
         </table>
@@ -443,26 +433,33 @@ function renderCedente(){
     </div>`;
   }).join('')+(pagsUnicos.length>24?`<div style="font-size:11px;color:#4a5568;text-align:center;padding:12px;grid-column:1/-1">+${pagsUnicos.length-24} pagadores adicionais não exibidos</div>`:'');
 
-  // Tabela de boletos
   document.getElementById('tbl-boletos').innerHTML=bolF.slice(0,100).map(b=>{
-    const cn=cnpjMap[b.id_pagador];
-    const liq=cn?parseFloat(cn.sacado_indice_liquidez_1m)||0:null;
-    const atr=cn?parseFloat(cn.media_atraso_dias)||0:null;
-    const inad=cn?parseFloat(cn.share_vl_inad_pag_bol_6_a_15d)||0:null;
     const vlr=parseFloat(b.vlr_nominal)||parseFloat(b.vlr_baixa)||0;
+    let diasAtrasoHtml='<td style="text-align:center;color:#4a5568">—</td>';
+    if(b.dt_pagamento&&b.dt_pagamento.trim()&&b.dt_vencimento&&b.dt_vencimento.trim()){
+      const dtPag=new Date(b.dt_pagamento.trim());
+      const dtVenc=new Date(b.dt_vencimento.trim());
+      if(!isNaN(dtPag)&&!isNaN(dtVenc)){
+        const dias=Math.round((dtPag-dtVenc)/(1000*60*60*24));
+        if(dias<=0){
+          diasAtrasoHtml=`<td style="text-align:center;color:#48bb78;font-weight:600">${Math.abs(dias)}d antes</td>`;
+        } else {
+          diasAtrasoHtml=`<td style="text-align:center;color:#f56565;font-weight:600">+${dias}d</td>`;
+        }
+      }
+    } else if(!b.dt_pagamento||!b.dt_pagamento.trim()){
+      diasAtrasoHtml='<td style="text-align:center;color:#ed8936;font-weight:500">Em aberto</td>';
+    }
     return`<tr>
       <td title="${b.id_boleto||''}">${b.id_boleto?b.id_boleto.substring(0,18)+'...':'-'}</td>
       <td><b title="${b.id_pagador||''}">${b.id_pagador?b.id_pagador.substring(0,20)+'...':'-'}</b></td>
       <td>${b.dt_emissao||'—'}</td><td>${b.dt_vencimento||'—'}</td><td>${b.dt_pagamento||'—'}</td>
       <td style="text-align:right">${vlr?'R$ '+vlr.toLocaleString('pt-BR',{minimumFractionDigits:2}):'—'}</td>
       <td>${b.tipo_baixa||'—'}</td>
-      <td style="color:${liq===null?'#4a5568':liq>=1?'#48bb78':'#f56565'}">${liq===null?'—':liq.toFixed(2)}</td>
-      <td style="color:${atr===null?'#4a5568':atr>15?'#f56565':atr>7?'#ed8936':'#48bb78'}">${atr===null?'—':atr.toFixed(1)+' d'}</td>
-      <td style="color:${inad===null?'#4a5568':inad>0.2?'#f56565':inad>0.1?'#ed8936':'#48bb78'}">${inad===null?'—':(inad*100).toFixed(1)+'%'}</td>
+      ${diasAtrasoHtml}
     </tr>`;
   }).join('');
 
-  // Gráfico
   setTimeout(()=>{
     const ctx=document.getElementById('chart-liq');if(!ctx)return;
     if(charts.liq)try{charts.liq.destroy()}catch(e){}
@@ -479,6 +476,42 @@ function renderCedente(){
         plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'Liq: '+c.raw.toFixed(2)}}},
         scales:{x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#718096',font:{size:10}},border:{color:'#2d3748'}},
           y:{grid:{display:false},ticks:{color:'#a0aec0',font:{size:10}},border:{color:'#2d3748'}}}}
+    });
+
+    const ctxC=document.getElementById('chart-comp');if(!ctxC)return;
+    if(charts.comp)try{charts.comp.destroy()}catch(e){}
+    const mediaGeral=calcScorePagadores(allCedentes.flatMap(c=>c.pagCnpjs));
+    const norm=(v,max)=>Math.round(Math.min(100,(v/max)*100));
+    const labelsComp=['Liq. (1m)','Liq. (3m)','Mat. v2','Mat. evol.','Inadimp. (inv.)','Atraso (inv.)'];
+    const dadosCed=[
+      norm(stats.liq,2),norm(stats.liqQ,2),
+      norm(stats.mat,1),norm(stats.matEvol,1),
+      Math.round((1-Math.min(1,stats.inad))*100),
+      Math.round((1-Math.min(1,stats.atraso/30))*100)
+    ];
+    const dadosMedia=[
+      norm(mediaGeral.liq,2),norm(mediaGeral.liqQ,2),
+      norm(mediaGeral.mat,1),norm(mediaGeral.matEvol,1),
+      Math.round((1-Math.min(1,mediaGeral.inad))*100),
+      Math.round((1-Math.min(1,mediaGeral.atraso/30))*100)
+    ];
+    charts.comp=new Chart(ctxC,{
+      type:'bar',
+      data:{
+        labels:labelsComp,
+        datasets:[
+          {label:'Cedente selecionado',data:dadosCed,backgroundColor:'#378ADD',borderRadius:4,borderSkipped:false},
+          {label:'Média geral',data:dadosMedia,backgroundColor:'rgba(136,135,128,.4)',borderRadius:4,borderSkipped:false}
+        ]
+      },
+      options:{
+        responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.raw}%`}}},
+        scales:{
+          x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#718096',font:{size:10}},border:{color:'#2d3748'}},
+          y:{min:0,max:100,grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#718096',font:{size:10},callback:v=>v+'%'},border:{color:'#2d3748'}}
+        }
+      }
     });
   },100);
 }
