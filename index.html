@@ -7,53 +7,88 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
-body{background:#0e1117;color:#e2e8f0;min-height:100vh}
-.topbar{background:#161b27;border-bottom:1px solid #2d3748;padding:10px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+body{background:#0e1117;color:#e2e8f0;min-height:100vh;overflow-x:hidden}
+
+/* TOPBAR */
+.topbar{background:#161b27;border-bottom:1px solid #2d3748;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
 .logo{display:flex;align-items:center;gap:10px}
 .logo-icon{width:36px;height:36px;background:#1a56db;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;flex-shrink:0}
-.logo-text h1{font-size:15px;font-weight:600;color:#e2e8f0;margin:0}
-.logo-text p{font-size:11px;color:#718096;margin:0}
+.logo-text h1{font-size:15px;font-weight:600;color:#e2e8f0}
+.logo-text p{font-size:11px;color:#718096}
 .updated{background:#1a202c;padding:4px 10px;border-radius:6px;border:1px solid #2d3748;font-size:11px;color:#718096}
-.upload-bar{background:#1a2035;border-bottom:1px solid #2d3748;padding:10px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+
+/* UPLOAD BAR */
+.upload-bar{background:#1a2035;border-bottom:1px solid #2d3748;padding:9px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .upload-label{font-size:11px;color:#718096;white-space:nowrap}
-.upload-zone{display:flex;align-items:center;gap:8px;background:#0e1117;border:1px dashed #2d3748;border-radius:8px;padding:6px 12px;cursor:pointer;transition:border-color .2s}
+.upload-zone{display:flex;align-items:center;gap:7px;background:#0e1117;border:1px dashed #2d3748;border-radius:8px;padding:5px 11px;cursor:pointer;transition:border-color .2s}
 .upload-zone:hover{border-color:#1a56db}
 .upload-zone input{display:none}
 .upload-zone span{font-size:11px;color:#a0aec0}
-.upload-btn{background:#1a56db;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:11px;cursor:pointer;font-weight:500;white-space:nowrap}
+.upload-btn{background:#1a56db;color:#fff;border:none;border-radius:6px;padding:6px 16px;font-size:11px;cursor:pointer;font-weight:500}
 .upload-btn:hover{background:#1e63f0}
 .upload-status{font-size:11px;color:#718096}
 .upload-status.error{color:#f56565}
-.filters{background:#161b27;padding:8px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #2d3748;flex-wrap:wrap}
+
+/* FILTERS */
+.filters{background:#161b27;padding:7px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #2d3748;flex-wrap:wrap}
 .filter-label{font-size:11px;color:#718096}
-select{background:#0e1117;color:#e2e8f0;border:1px solid #2d3748;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer}
-.body{padding:14px 18px;display:flex;flex-direction:column;gap:12px}
+select{background:#0e1117;color:#e2e8f0;border:1px solid #2d3748;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;max-width:320px;overflow:hidden;text-overflow:ellipsis}
 
-/* KPIs */
-.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
-.kpi{background:#161b27;border:1px solid #2d3748;border-radius:10px;padding:12px 14px;position:relative;overflow:hidden}
-.kpi-accent{position:absolute;top:0;left:0;right:0;height:3px;border-radius:10px 10px 0 0}
-.kpi-label{font-size:10px;color:#718096;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
-.kpi-value{font-size:22px;font-weight:700;line-height:1;margin-bottom:4px}
-.kpi-sub{font-size:10px}
+/* BODY */
+.body{padding:14px 20px;display:flex;flex-direction:column;gap:12px;width:100%}
 
-/* Parecer grande */
-.parecer-box{border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:14px;margin-bottom:4px}
-.parecer-ok{background:rgba(72,187,120,.1);border:1.5px solid rgba(72,187,120,.4)}
-.parecer-caution{background:rgba(237,137,54,.1);border:1.5px solid rgba(237,137,54,.4)}
-.parecer-risk{background:rgba(245,101,101,.1);border:1.5px solid rgba(245,101,101,.4)}
-.parecer-icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.parecer-icon-ok{background:rgba(72,187,120,.2)}
-.parecer-icon-caution{background:rgba(237,137,54,.2)}
-.parecer-icon-risk{background:rgba(245,101,101,.2)}
-.parecer-title{font-size:20px;font-weight:700}
+/* PARECER */
+.parecer-box{border-radius:12px;padding:14px 20px;display:flex;align-items:center;gap:16px;width:100%}
+.parecer-ok{background:rgba(72,187,120,.08);border:1.5px solid rgba(72,187,120,.35)}
+.parecer-caution{background:rgba(237,137,54,.08);border:1.5px solid rgba(237,137,54,.35)}
+.parecer-risk{background:rgba(245,101,101,.08);border:1.5px solid rgba(245,101,101,.35)}
+.parecer-icon{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.parecer-icon-ok{background:rgba(72,187,120,.18)}
+.parecer-icon-caution{background:rgba(237,137,54,.18)}
+.parecer-icon-risk{background:rgba(245,101,101,.18)}
+.parecer-title{font-size:22px;font-weight:700}
 .parecer-ok .parecer-title{color:#48bb78}
 .parecer-caution .parecer-title{color:#ed8936}
 .parecer-risk .parecer-title{color:#f56565}
-.parecer-sub{font-size:11px;color:#a0aec0;margin-top:2px}
+.parecer-sub{font-size:11px;color:#a0aec0;margin-top:3px}
 
-/* Semáforo inline */
-.semaforo{display:inline-flex;align-items:center;gap:6px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:600}
+/* KPIs */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;width:100%}
+.kpi{background:#161b27;border:1px solid #2d3748;border-radius:10px;padding:12px 14px;position:relative;overflow:hidden}
+.kpi-accent{position:absolute;top:0;left:0;right:0;height:3px;border-radius:10px 10px 0 0}
+.kpi-label{font-size:10px;color:#718096;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+.kpi-value{font-size:22px;font-weight:700;line-height:1.1;margin-bottom:3px}
+.kpi-sub{font-size:10px}
+
+/* CHARTS ROW */
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%}
+
+/* PANELS */
+.panel{background:#161b27;border:1px solid #2d3748;border-radius:10px;padding:14px;width:100%}
+.panel-title{font-size:11px;font-weight:600;color:#a0aec0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px}
+.panel-subtitle{font-size:10px;color:#4a5568;margin-bottom:10px}
+
+/* PROGRESS BARS */
+.prog-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.prog-label{font-size:11px;color:#a0aec0;width:140px;flex-shrink:0;text-align:right}
+.prog-track{flex:1;height:16px;background:#0e1117;border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:10px;font-weight:600;color:#fff;min-width:28px;transition:width .4s}
+.prog-val{font-size:11px;font-weight:500;width:38px;text-align:right;flex-shrink:0}
+.info-note{font-size:10px;color:#4a5568;font-style:italic;margin-top:4px}
+
+/* PAGADOR CARDS - grid horizontal */
+.pag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.pag-card{background:#0e1117;border:1px solid #2d3748;border-radius:8px;padding:10px 12px}
+.pag-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px}
+.pag-id{font-size:11px;font-weight:600;color:#e2e8f0;word-break:break-all;line-height:1.3}
+.pag-sub{font-size:10px;color:#718096;margin-top:2px}
+.pag-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
+.pag-metric{text-align:center;background:#161b27;border-radius:6px;padding:6px 4px}
+.pag-metric-val{font-size:13px;font-weight:600}
+.pag-metric-lbl{font-size:9px;color:#718096;margin-top:2px}
+
+/* SEMAFORO */
+.semaforo{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;white-space:nowrap}
 .sem-ok{background:rgba(72,187,120,.15);color:#48bb78;border:1px solid rgba(72,187,120,.3)}
 .sem-caution{background:rgba(237,137,54,.15);color:#ed8936;border:1px solid rgba(237,137,54,.3)}
 .sem-risk{background:rgba(245,101,101,.15);color:#f56565;border:1px solid rgba(245,101,101,.3)}
@@ -61,26 +96,10 @@ select{background:#0e1117;color:#e2e8f0;border:1px solid #2d3748;border-radius:6
 .dot-caution{width:7px;height:7px;border-radius:50%;background:#ed8936;flex-shrink:0}
 .dot-risk{width:7px;height:7px;border-radius:50%;background:#f56565;flex-shrink:0}
 
-/* Panels */
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-.panel{background:#161b27;border:1px solid #2d3748;border-radius:10px;padding:14px}
-.panel-title{font-size:11px;font-weight:600;color:#a0aec0;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
-.panel-subtitle{font-size:10px;color:#4a5568;margin-top:-8px;margin-bottom:10px}
-
-/* Cedente list */
-.cedente-row{display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:8px;cursor:pointer;transition:background .15s;border:1px solid transparent}
-.cedente-row:hover{background:#1a202c}
-.cedente-row.active{background:#0d1929;border-color:#1a56db}
-.cedente-info{flex:1;min-width:0}
-.cedente-name{font-size:12px;font-weight:500;color:#e2e8f0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.cedente-sub{font-size:10px;color:#718096}
-.cedente-score{font-size:15px;font-weight:700;min-width:32px;text-align:right;flex-shrink:0}
-
-/* Table */
-.tbl-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:11px}
-th{color:#718096;font-weight:500;padding:6px 8px;border-bottom:1px solid #2d3748;text-align:left;font-size:10px;text-transform:uppercase;white-space:nowrap}
+/* TABLE */
+.tbl-wrap{overflow-x:auto;width:100%}
+table{width:100%;border-collapse:collapse;font-size:11px;min-width:700px}
+th{color:#718096;font-weight:500;padding:7px 8px;border-bottom:1px solid #2d3748;text-align:left;font-size:10px;text-transform:uppercase;white-space:nowrap;background:#161b27;position:sticky;top:0}
 td{padding:6px 8px;border-bottom:1px solid #1a202c;color:#cbd5e0;white-space:nowrap}
 tr:hover td{background:#1a202c}
 .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600}
@@ -88,30 +107,26 @@ tr:hover td{background:#1a202c}
 .badge-caution{background:rgba(237,137,54,.15);color:#ed8936}
 .badge-risk{background:rgba(245,101,101,.15);color:#f56565}
 
-/* Pagador card */
-.pag-card{background:#0e1117;border:1px solid #2d3748;border-radius:8px;padding:10px 12px;margin-bottom:8px}
-.pag-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-.pag-id{font-size:12px;font-weight:600;color:#e2e8f0}
-.pag-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
-.pag-metric{text-align:center}
-.pag-metric-val{font-size:13px;font-weight:600}
-.pag-metric-lbl{font-size:9px;color:#718096;margin-top:1px}
+/* RANKING */
+.ranking-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer;transition:background .15s;border:1px solid transparent}
+.ranking-row:hover{background:#1a202c}
+.ranking-row.active{background:#0d1929;border-color:#1a56db}
+.ranking-num{font-size:12px;font-weight:700;color:#4a5568;width:22px;text-align:center;flex-shrink:0}
+.ranking-info{flex:1;min-width:0}
+.ranking-name{font-size:11px;font-weight:500;color:#e2e8f0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ranking-sub{font-size:10px;color:#718096}
+.ranking-score{font-size:15px;font-weight:700;min-width:32px;text-align:right;flex-shrink:0}
+.ranking-bar-wrap{width:80px;flex-shrink:0}
+.ranking-bar-track{height:6px;background:#0e1117;border-radius:3px;overflow:hidden}
+.ranking-bar-fill{height:100%;border-radius:3px}
 
-/* Progress bar */
-.prog-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
-.prog-label{font-size:11px;color:#a0aec0;width:130px;flex-shrink:0;text-align:right}
-.prog-track{flex:1;height:16px;background:#0e1117;border-radius:4px;overflow:hidden}
-.prog-fill{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:10px;font-weight:600;color:#fff}
-.prog-val{font-size:11px;font-weight:500;width:36px;text-align:right;flex-shrink:0}
-
+/* EMPTY */
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;color:#4a5568;font-size:12px;gap:10px;text-align:center}
-.divider{height:1px;background:#2d3748;margin:4px 0}
-.info-note{font-size:10px;color:#4a5568;font-style:italic;margin-top:4px}
 
-@media(max-width:900px){
-  .kpi-row{grid-template-columns:repeat(2,1fr)}
-  .row2,.row3{grid-template-columns:1fr}
-}
+/* SECTION DIVIDER */
+.section-divider{display:flex;align-items:center;gap:10px;margin:4px 0}
+.section-divider span{font-size:11px;font-weight:600;color:#4a5568;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:#2d3748}
 </style>
 </head>
 <body>
@@ -131,28 +146,28 @@ tr:hover td{background:#1a202c}
   <span class="upload-label">Carregar dados:</span>
   <label class="upload-zone">
     <input type="file" id="file-boletos" accept=".csv" onchange="handleFile('boletos',this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#718096" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#718096" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
     <span id="lbl-boletos">Boletos.csv</span>
   </label>
   <label class="upload-zone">
     <input type="file" id="file-cnpjs" accept=".csv" onchange="handleFile('cnpjs',this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#718096" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#718096" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
     <span id="lbl-cnpjs">CNPJs.csv</span>
   </label>
-  <button class="upload-btn" onclick="processData()">&#9654; Analisar</button>
+  <button class="upload-btn" onclick="processData()">▶ Analisar</button>
   <span id="upload-status" class="upload-status"></span>
 </div>
 
 <div class="filters" id="filters-bar" style="display:none">
-  <span class="filter-label">&#128269; Cedente:</span>
-  <select id="sel-cedente" onchange="renderCedente()"></select>
+  <span class="filter-label">🔍 Cedente:</span>
+  <select id="sel-cedente" onchange="selectCedenteFromDropdown()"></select>
   <span class="filter-label" style="margin-left:8px">UF pagadores:</span>
   <select id="sel-uf" onchange="renderCedente()"><option value="">Todas</option></select>
-  <span class="filter-label" style="margin-left:8px">Parecer:</span>
-  <select id="sel-parecer" onchange="renderListaCedentes()">
+  <span class="filter-label" style="margin-left:8px">Filtrar ranking:</span>
+  <select id="sel-parecer" onchange="renderRanking()">
     <option value="">Todos</option>
     <option value="ok">Comprar</option>
-    <option value="caution">Análise</option>
+    <option value="caution">Análise adicional</option>
     <option value="risk">Não Comprar</option>
   </select>
 </div>
@@ -167,23 +182,19 @@ tr:hover td{background:#1a202c}
 </div>
 
 <script>
-let rawBoletos=[], rawCNPJs=[], allCedentes=[], cnpjMap={}, charts={}, activeCedente=null;
+let rawBoletos=[],rawCNPJs=[],allCedentes=[],cnpjMap={},charts={},activeCedente=null;
 
 function parseCSV(text){
   const lines=text.trim().split(/\r?\n/);
   const sep=lines[0].includes(';')?';':',';
-  const headers=lines[0].split(sep).map(h=>h.trim().replace(/^"|"$/g,'').toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g,''));
+  const headers=lines[0].split(sep).map(h=>h.trim().replace(/^"|"$/g,'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''));
   return lines.slice(1).filter(l=>l.trim()).map(line=>{
     const vals=[];let cur='',inQ=false;
     for(let i=0;i<line.length;i++){
-      if(line[i]==='"'){inQ=!inQ}
-      else if(line[i]===sep&&!inQ){vals.push(cur);cur=''}
-      else{cur+=line[i]}
+      if(line[i]==='"'){inQ=!inQ}else if(line[i]===sep&&!inQ){vals.push(cur);cur=''}else{cur+=line[i]}
     }
     vals.push(cur);
-    const obj={};
-    headers.forEach((h,i)=>{obj[h]=(vals[i]||'').trim()});
+    const obj={};headers.forEach((h,i)=>{obj[h]=(vals[i]||'').trim()});
     return obj;
   });
 }
@@ -195,193 +206,134 @@ function handleFile(type,input){
     const data=parseCSV(e.target.result);
     if(type==='boletos'){rawBoletos=data;document.getElementById('lbl-boletos').textContent=file.name;document.getElementById('lbl-boletos').style.color='#48bb78'}
     else{rawCNPJs=data;document.getElementById('lbl-cnpjs').textContent=file.name;document.getElementById('lbl-cnpjs').style.color='#48bb78'}
-    setStatus(`${data.length} registros carregados — ${file.name}`);
+    setStatus(`${data.length} registros — ${file.name}`);
   };
   reader.readAsText(file,'UTF-8');
 }
 
-function setStatus(msg,err){
-  const el=document.getElementById('upload-status');
-  el.textContent=msg;el.className='upload-status'+(err?' error':'');
-}
+function setStatus(msg,err){const el=document.getElementById('upload-status');el.textContent=msg;el.className='upload-status'+(err?' error':'');}
 
-// ─── SCORE baseado nos pagadores ───────────────────────────────────────────
-// Recebe array de CNPJs dos pagadores daquele cedente e calcula médias
 function calcScorePagadores(pagCnpjs){
   if(!pagCnpjs.length)return{score:0,liq:0,liqQ:0,inad:0,atraso:0,mat:0,matEvol:0,qtd:0,n:0};
   const avg=f=>pagCnpjs.reduce((s,c)=>s+(parseFloat(c[f])||0),0)/pagCnpjs.length;
-
-  const liq   = avg('sacado_indice_liquidez_1m');
-  const liqQ  = avg('indicador_liquidez_quantitativo_3m');
-  const inad  = avg('share_vl_inad_pag_bol_6_a_15d');
-  const atraso= avg('media_atraso_dias');
-  const mat   = avg('score_materialidade_v2');
+  const liq=avg('sacado_indice_liquidez_1m');
+  const liqQ=avg('indicador_liquidez_quantitativo_3m');
+  const inad=avg('share_vl_inad_pag_bol_6_a_15d');
+  const atraso=avg('media_atraso_dias');
+  const mat=avg('score_materialidade_v2');
   const matEvol=avg('score_materialidade_evolucao');
-  const qtd   = avg('score_quantidade_v2');
-
-  // Pesos: liquidez 30%, liquidez quantitativa 15%, inadimplência 25%, atraso 20%, materialidade 10%
-  const liqNorm   = Math.min(100,(liq/2)*100)*0.30;
-  const liqQNorm  = Math.min(100,(liqQ/2)*100)*0.15;
-  const inadNorm  = (1-Math.min(1,inad))*100*0.25;
-  const atrasoNorm= (1-Math.min(1,atraso/30))*100*0.20;
-  const matNorm   = Math.min(100,mat*100)*0.10;
-
-  const score=Math.round(liqNorm+liqQNorm+inadNorm+atrasoNorm+matNorm);
+  const qtd=avg('score_quantidade_v2');
+  const score=Math.round(
+    Math.min(100,(liq/2)*100)*0.30+
+    Math.min(100,(liqQ/2)*100)*0.15+
+    (1-Math.min(1,inad))*100*0.25+
+    (1-Math.min(1,atraso/30))*100*0.20+
+    Math.min(100,mat*100)*0.10
+  );
   return{score,liq,liqQ,inad,atraso,mat,matEvol,qtd,n:pagCnpjs.length};
 }
 
 function verdict(score){return score>=65?'ok':score>=40?'caution':'risk'}
-function verductLabel(v){return v==='ok'?'Comprar':v==='caution'?'Análise adicional':'Não Comprar'}
-function verductIcon(v){return v==='ok'?'✓':v==='caution'?'⚠':'✗'}
-
-function fmtMoeda(v){
-  if(v>=1e6)return'R$ '+(v/1e6).toFixed(1)+'M';
-  if(v>=1e3)return'R$ '+(v/1e3).toFixed(0)+'K';
-  return'R$ '+Math.round(v).toLocaleString('pt-BR');
-}
+function vLabel(v){return v==='ok'?'Comprar':v==='caution'?'Análise adicional':'Não Comprar'}
+function vIcon(v){return v==='ok'?'✓':v==='caution'?'⚠':'✗'}
+function vColor(v){return v==='ok'?'#48bb78':v==='caution'?'#ed8936':'#f56565'}
+function fmtM(v){return v>=1e6?'R$ '+(v/1e6).toFixed(1)+'M':v>=1e3?'R$ '+(v/1e3).toFixed(0)+'K':'R$ '+Math.round(v).toLocaleString('pt-BR')}
 function fmtN(v,d=2){return(parseFloat(v)||0).toFixed(d)}
-function colorVerdict(v){return v==='ok'?'#48bb78':v==='caution'?'#ed8936':'#f56565'}
 
-// ─── PROCESSAR ─────────────────────────────────────────────────────────────
 function processData(){
   if(!rawBoletos.length||!rawCNPJs.length){setStatus('Carregue os dois arquivos antes de analisar.',true);return}
-
-  cnpjMap={};
-  rawCNPJs.forEach(c=>{if(c.id_cnpj)cnpjMap[c.id_cnpj]=c});
-
-  // Agrupar boletos por cedente (id_beneficiario)
+  cnpjMap={};rawCNPJs.forEach(c=>{if(c.id_cnpj)cnpjMap[c.id_cnpj]=c});
   const cedMap={};
   rawBoletos.forEach(b=>{
-    const cid=b.id_beneficiario||b.id_cedente||'';
-    if(!cid)return;
+    const cid=b.id_beneficiario||b.id_cedente||'';if(!cid)return;
     if(!cedMap[cid])cedMap[cid]={id:cid,boletos:[]};
     cedMap[cid].boletos.push(b);
   });
-
   allCedentes=Object.values(cedMap).map(c=>{
-    // Para cada boleto, pega o CNPJ do PAGADOR
-    const pagCnpjs=[...new Set(c.boletos.map(b=>b.id_pagador).filter(Boolean))]
-      .map(pid=>cnpjMap[pid]).filter(Boolean);
-
+    const pagIds=[...new Set(c.boletos.map(b=>b.id_pagador).filter(Boolean))];
+    const pagCnpjs=pagIds.map(pid=>cnpjMap[pid]).filter(Boolean);
     const stats=calcScorePagadores(pagCnpjs);
     const verd=verdict(stats.score);
     const vlrTotal=c.boletos.reduce((s,b)=>s+(parseFloat(b.vlr_nominal)||parseFloat(b.vlr_baixa)||0),0);
     const pagos=c.boletos.filter(b=>b.dt_pagamento&&b.dt_pagamento.trim()).length;
-
-    // UFs distintas dos pagadores
     const ufs=[...new Set(pagCnpjs.map(p=>p.uf).filter(Boolean))];
-
-    return{
-      id:c.id,
-      boletos:c.boletos,
-      pagCnpjs,
-      pagadoresIds:[...new Set(c.boletos.map(b=>b.id_pagador).filter(Boolean))],
-      stats,
-      verdict:verd,
-      vlrTotal,
-      pctPago:c.boletos.length?Math.round((pagos/c.boletos.length)*100):0,
-      ufs,
-    };
+    return{id:c.id,boletos:c.boletos,pagIds,pagCnpjs,stats,verdict:verd,vlrTotal,pctPago:c.boletos.length?Math.round((pagos/c.boletos.length)*100):0,ufs};
   }).sort((a,b)=>b.stats.score-a.stats.score);
 
-  // Popular filtros
   const selCed=document.getElementById('sel-cedente');
   selCed.innerHTML=allCedentes.map(c=>`<option value="${c.id}">${c.id}</option>`).join('');
-
   const allUfs=[...new Set(allCedentes.flatMap(c=>c.ufs))].sort();
   document.getElementById('sel-uf').innerHTML='<option value="">Todas</option>'+allUfs.map(u=>`<option value="${u}">${u}</option>`).join('');
   document.getElementById('filters-bar').style.display='flex';
   document.getElementById('updated-time').textContent='Atualizado: '+new Date().toLocaleString('pt-BR');
   setStatus(`${allCedentes.length} cedentes · ${rawBoletos.length} boletos · ${rawCNPJs.length} CNPJs`);
-
   activeCedente=allCedentes[0]?.id||null;
-  renderDash();
+  renderAll();
 }
 
-// ─── RENDER PRINCIPAL ───────────────────────────────────────────────────────
-function renderDash(){
-  Object.values(charts).forEach(c=>{try{c.destroy()}catch(e){}});charts={};
-
-  document.getElementById('dash-body').innerHTML=`
-    <div class="row2" style="grid-template-columns:280px 1fr">
-      <div id="painel-lista"></div>
-      <div id="painel-cedente"></div>
-    </div>`;
-
-  renderListaCedentes();
+function selectCedenteFromDropdown(){
+  activeCedente=document.getElementById('sel-cedente').value;
   renderCedente();
-}
-
-function renderListaCedentes(){
-  const filtro=document.getElementById('sel-parecer')?.value||'';
-  let lista=allCedentes;
-  if(filtro)lista=lista.filter(c=>c.verdict===filtro);
-
-  document.getElementById('painel-lista').innerHTML=`
-    <div class="panel" style="height:100%;overflow-y:auto;max-height:80vh">
-      <div class="panel-title">Cedentes (${lista.length})</div>
-      ${lista.map(c=>`
-        <div class="cedente-row ${c.id===activeCedente?'active':''}" onclick="selectCedente('${c.id}')">
-          <div class="semaforo sem-${c.verdict}" style="padding:2px 7px;font-size:10px">
-            <div class="dot-${c.verdict}"></div>${verductLabel(c.verdict)}
-          </div>
-          <div class="cedente-info">
-            <div class="cedente-name">${c.id}</div>
-            <div class="cedente-sub">${c.boletos.length} boletos · ${c.pagadoresIds.length} pagadores · ${fmtMoeda(c.vlrTotal)}</div>
-          </div>
-          <div class="cedente-score" style="color:${colorVerdict(c.verdict)}">${c.stats.score}</div>
-        </div>`).join('')}
-    </div>`;
+  renderRanking();
+  setTimeout(()=>document.getElementById('sec-cedente')?.scrollIntoView({behavior:'smooth',block:'start'}),50);
 }
 
 function selectCedente(id){
   activeCedente=id;
   document.getElementById('sel-cedente').value=id;
-  renderListaCedentes();
   renderCedente();
+  renderRanking();
+  document.getElementById('sec-cedente')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function renderAll(){
+  Object.values(charts).forEach(c=>{try{c.destroy()}catch(e){}});charts={};
+  document.getElementById('dash-body').innerHTML=`
+    <div id="sec-cedente"></div>
+    <div class="section-divider" id="sec-ranking-div" style="display:none"><span>Ranking de todos os cedentes</span></div>
+    <div class="panel" id="sec-ranking" style="display:none">
+      <div class="panel-title">Ranking geral de cedentes <span id="ranking-count" style="font-size:10px;font-weight:400;color:#718096"></span></div>
+      <div class="panel-subtitle">Score baseado nos índices médios dos pagadores de cada cedente · Clique para selecionar</div>
+      <div id="ranking-list"></div>
+    </div>`;
+  renderCedente();
+  renderRanking();
 }
 
 function renderCedente(){
-  const ufFiltro=document.getElementById('sel-uf')?.value||'';
-  const selId=document.getElementById('sel-cedente')?.value||activeCedente;
-  const c=allCedentes.find(x=>x.id===selId);
-  if(!c){document.getElementById('painel-cedente').innerHTML='<div class="empty"><span>Selecione um cedente</span></div>';return}
-  activeCedente=selId;
+  const ufF=document.getElementById('sel-uf')?.value||'';
+  const c=allCedentes.find(x=>x.id===activeCedente);
+  const el=document.getElementById('sec-cedente');
+  if(!c||!el){return}
 
-  // Filtrar pagadores por UF se necessário
-  let pagCnpjsFilt=c.pagCnpjs;
-  if(ufFiltro)pagCnpjsFilt=pagCnpjsFilt.filter(p=>p.uf===ufFiltro);
-  const stats=ufFiltro?calcScorePagadores(pagCnpjsFilt):c.stats;
+  let pagCnpjsF=c.pagCnpjs;
+  if(ufF)pagCnpjsF=pagCnpjsF.filter(p=>p.uf===ufF);
+  const stats=ufF?calcScorePagadores(pagCnpjsF):c.stats;
   const verd=verdict(stats.score);
+  const col=vColor(verd);
 
-  // Boletos filtrados por UF do pagador
-  let boletosFilt=c.boletos;
-  if(ufFiltro){
-    const pagIdsUf=new Set(pagCnpjsFilt.map(p=>p.id_cnpj));
-    boletosFilt=c.boletos.filter(b=>pagIdsUf.has(b.id_pagador));
-  }
+  let bolF=c.boletos;
+  if(ufF){const pIds=new Set(pagCnpjsF.map(p=>p.id_cnpj));bolF=c.boletos.filter(b=>pIds.has(b.id_pagador))}
 
-  const col=colorVerdict(verd);
-
-  document.getElementById('painel-cedente').innerHTML=`
+  el.innerHTML=`
     <!-- PARECER -->
-    <div class="parecer-box parecer-${verd}" style="margin-bottom:12px">
-      <div class="parecer-icon parecer-icon-${verd}">${verductIcon(verd)}</div>
-      <div>
-        <div class="parecer-title">${verductLabel(verd)}</div>
-        <div class="parecer-sub">Score médio dos pagadores: <b style="color:${col}">${stats.score}/100</b> · Baseado em ${stats.n} pagador(es) com dados na base de CNPJs</div>
-        <div class="parecer-sub" style="margin-top:3px">${
-          verd==='ok'?'Os pagadores dos boletos deste cedente apresentam boa liquidez e baixa inadimplência.':
-          verd==='caution'?'Alguns indicadores dos pagadores merecem atenção antes da decisão de compra.':
-          'Os pagadores apresentam risco elevado de inadimplência ou baixa liquidez.'
-        }</div>
+    <div class="parecer-box parecer-${verd}">
+      <div class="parecer-icon parecer-icon-${verd}">${vIcon(verd)}</div>
+      <div style="flex:1">
+        <div class="parecer-title">${vLabel(verd)}</div>
+        <div class="parecer-sub">Score médio dos pagadores: <b style="color:${col}">${stats.score}/100</b> · ${stats.n} pagador(es) com dados na base de CNPJs · Cedente: <b style="color:#e2e8f0">${c.id.length>40?c.id.substring(0,40)+'...':c.id}</b></div>
+        <div class="parecer-sub" style="margin-top:3px">${verd==='ok'?'Os pagadores dos boletos deste cedente apresentam boa liquidez e baixa inadimplência.':verd==='caution'?'Alguns indicadores dos pagadores merecem atenção antes da decisão de compra.':'Os pagadores apresentam risco elevado de inadimplência ou baixa liquidez.'}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:36px;font-weight:700;color:${col}">${stats.score}</div>
+        <div style="font-size:10px;color:#718096">Score /100</div>
       </div>
     </div>
 
-    <!-- KPIs dos pagadores -->
-    <div class="kpi-row" style="margin-bottom:12px">
+    <!-- KPIs -->
+    <div class="kpi-row">
       <div class="kpi"><div class="kpi-accent" style="background:#0bc5ea"></div>
-        <div class="kpi-label">Liquidez média (sacado 1m)</div>
+        <div class="kpi-label">Liquidez média sacado (1m)</div>
         <div class="kpi-value" style="color:#0bc5ea">${fmtN(stats.liq)}</div>
         <div class="kpi-sub" style="color:${stats.liq>=1?'#48bb78':'#f56565'}">${stats.liq>=1?'Dentro do esperado':'Abaixo do ideal'}</div>
       </div>
@@ -403,23 +355,22 @@ function renderCedente(){
       <div class="kpi"><div class="kpi-accent" style="background:#48bb78"></div>
         <div class="kpi-label">Score materialidade v2</div>
         <div class="kpi-value" style="color:#48bb78">${fmtN(stats.mat,2)}</div>
-        <div class="kpi-sub" style="color:#718096">Evolução: ${fmtN(stats.matEvol,2)}</div>
+        <div class="kpi-sub" style="color:#718096">Evolução: ${fmtN(stats.matEvol,2)} · Qtd: ${fmtN(stats.qtd,2)}</div>
       </div>
     </div>
 
-    <div class="row2" style="margin-bottom:12px">
-      <!-- Perfil dos pagadores -->
+    <!-- CHARTS -->
+    <div class="charts-row">
       <div class="panel">
-        <div class="panel-title">Perfil dos pagadores (${pagCnpjsFilt.length} com dados)</div>
-        <div class="panel-subtitle">Índices de liquidez por pagador — base de CNPJs</div>
-        <div style="position:relative;width:100%;height:${Math.max(120,Math.min(pagCnpjsFilt.length,8)*32+40)}px">
-          <canvas id="chart-pag-liq"></canvas>
+        <div class="panel-title">Liquidez por pagador (sacado 1m)</div>
+        <div class="panel-subtitle">Top 8 pagadores deste cedente · coloração por nível de risco</div>
+        <div style="position:relative;width:100%;height:${Math.max(140,Math.min(pagCnpjsF.length,8)*32+50)}px">
+          <canvas id="chart-liq"></canvas>
         </div>
       </div>
-
-      <!-- Distribuição do score -->
       <div class="panel">
         <div class="panel-title">Índices médios dos pagadores</div>
+        <div class="panel-subtitle">Médias consolidadas de todos os pagadores com dados na base</div>
         ${[
           {label:'Liquidez sacado (1m)',val:stats.liq,max:2,color:'#0bc5ea'},
           {label:'Liq. quantitativa (3m)',val:stats.liqQ,max:2,color:'#9f7aea'},
@@ -439,22 +390,21 @@ function renderCedente(){
       </div>
     </div>
 
-    <!-- Pagadores individuais -->
-    <div class="panel" style="margin-bottom:12px">
-      <div class="panel-title">Pagadores dos boletos deste cedente</div>
-      <div class="panel-subtitle">Cada pagador cruzado com a base de CNPJs</div>
-      <div id="pag-cards"></div>
+    <!-- PAGADORES INDIVIDUAIS -->
+    <div class="panel">
+      <div class="panel-title">Pagadores dos boletos deste cedente <span style="font-size:10px;font-weight:400;color:#718096">${pagCnpjsF.length} com dados na base de CNPJs</span></div>
+      <div class="panel-subtitle">Cada pagador cruzado individualmente com a base de CNPJs</div>
+      <div class="pag-grid" id="pag-grid-content"></div>
     </div>
 
-    <!-- Boletos -->
+    <!-- BOLETOS -->
     <div class="panel">
-      <div class="panel-title">Boletos do cedente ${c.id} (${boletosFilt.length})</div>
+      <div class="panel-title">Boletos do cedente <span style="font-weight:400;color:#718096;font-size:10px;margin-left:6px">${c.id.length>50?c.id.substring(0,50)+'...':c.id}</span> <span style="font-size:10px;font-weight:400;color:#718096">${bolF.length} registros</span></div>
       <div class="tbl-wrap">
         <table>
           <thead><tr>
-            <th>ID Boleto</th><th>Pagador (devedor)</th><th>Emissão</th>
-            <th>Vencimento</th><th>Pagamento</th><th style="text-align:right">Vlr Nominal</th>
-            <th>Tipo baixa</th><th>Liq. pagador</th><th>Atraso pagador</th>
+            <th>ID Boleto</th><th>Pagador (devedor)</th><th>Emissão</th><th>Vencimento</th><th>Pagamento</th>
+            <th style="text-align:right">Vlr Nominal</th><th>Tipo baixa</th><th>Liq. pagador</th><th>Atraso pagador</th><th>Inad. pagador</th>
           </tr></thead>
           <tbody id="tbl-boletos"></tbody>
         </table>
@@ -462,85 +412,110 @@ function renderCedente(){
     </div>
   `;
 
-  // Renderizar cards de pagadores
-  const pagsUnicos=[...new Set(c.boletos.map(b=>b.id_pagador).filter(Boolean))];
-  const pagCards=pagsUnicos.slice(0,12).map(pid=>{
+  // Pagadores individuais
+  const pagsUnicos=c.pagIds.filter(pid=>!ufF||cnpjMap[pid]?.uf===ufF);
+  document.getElementById('pag-grid-content').innerHTML=pagsUnicos.slice(0,24).map(pid=>{
     const cn=cnpjMap[pid];
-    const liq=cn?parseFloat(cn.sacado_indice_liquidez_1m)||0:null;
-    const atr=cn?parseFloat(cn.media_atraso_dias)||0:null;
-    const inad=cn?parseFloat(cn.share_vl_inad_pag_bol_6_a_15d)||0:null;
-    const mat=cn?parseFloat(cn.score_materialidade_v2)||0:null;
+    if(!cn)return`<div class="pag-card"><div class="pag-header"><div><div class="pag-id">${pid}</div><div class="pag-sub">Sem dados na base de CNPJs</div></div><div class="semaforo" style="background:#1a202c;color:#4a5568;border:1px solid #2d3748">Sem dados</div></div></div>`;
+    const liq=parseFloat(cn.sacado_indice_liquidez_1m)||0;
+    const atr=parseFloat(cn.media_atraso_dias)||0;
+    const inad=parseFloat(cn.share_vl_inad_pag_bol_6_a_15d)||0;
+    const mat=parseFloat(cn.score_materialidade_v2)||0;
+    const liqQ=parseFloat(cn.indicador_liquidez_quantitativo_3m)||0;
+    const vp=verdict(calcScorePagadores([cn]).score);
     const nBol=c.boletos.filter(b=>b.id_pagador===pid).length;
-    const vPag=cn?verdict(calcScorePagadores([cn]).score):null;
     return`<div class="pag-card">
       <div class="pag-header">
-        <div>
-          <div class="pag-id">${pid}</div>
-          <div style="font-size:10px;color:#718096">${cn?`UF: ${cn.uf||'—'} · CNAE: ${cn.cd_cnae_prin||'—'}`:'Sem dados na base de CNPJs'} · ${nBol} boleto(s)</div>
+        <div style="min-width:0">
+          <div class="pag-id">${pid.length>32?pid.substring(0,32)+'...':pid}</div>
+          <div class="pag-sub">UF: ${cn.uf||'—'} · CNAE: ${cn.cd_cnae_prin||'—'} · ${nBol} boleto(s)</div>
         </div>
-        ${vPag?`<div class="semaforo sem-${vPag}"><div class="dot-${vPag}"></div>${verductLabel(vPag)}</div>`:'<div class="semaforo" style="background:#1a202c;color:#4a5568;border:1px solid #2d3748">Sem dados</div>'}
+        <div class="semaforo sem-${vp}" style="flex-shrink:0"><div class="dot-${vp}"></div>${vLabel(vp)}</div>
       </div>
-      ${cn?`<div class="pag-metrics">
+      <div class="pag-metrics">
         <div class="pag-metric"><div class="pag-metric-val" style="color:${liq>=1?'#48bb78':'#f56565'}">${liq.toFixed(2)}</div><div class="pag-metric-lbl">Liq. 1m</div></div>
-        <div class="pag-metric"><div class="pag-metric-val" style="color:${atr>15?'#f56565':atr>7?'#ed8936':'#48bb78'}">${atr.toFixed(1)}d</div><div class="pag-metric-lbl">Atraso médio</div></div>
-        <div class="pag-metric"><div class="pag-metric-val" style="color:${inad>0.2?'#f56565':inad>0.1?'#ed8936':'#48bb78'}">${(inad*100).toFixed(1)}%</div><div class="pag-metric-lbl">Inadimplência</div></div>
+        <div class="pag-metric"><div class="pag-metric-val" style="color:${liqQ>=1?'#48bb78':'#f56565'}">${liqQ.toFixed(2)}</div><div class="pag-metric-lbl">Liq. 3m</div></div>
+        <div class="pag-metric"><div class="pag-metric-val" style="color:${atr>15?'#f56565':atr>7?'#ed8936':'#48bb78'}">${atr.toFixed(1)}d</div><div class="pag-metric-lbl">Atraso</div></div>
+        <div class="pag-metric"><div class="pag-metric-val" style="color:${inad>0.2?'#f56565':inad>0.1?'#ed8936':'#48bb78'}">${(inad*100).toFixed(1)}%</div><div class="pag-metric-lbl">Inadimpl.</div></div>
         <div class="pag-metric"><div class="pag-metric-val" style="color:#48bb78">${mat.toFixed(2)}</div><div class="pag-metric-lbl">Mat. v2</div></div>
-        <div class="pag-metric"><div class="pag-metric-val" style="color:#9f7aea">${cn.uf||'—'}</div><div class="pag-metric-lbl">UF</div></div>
-        <div class="pag-metric"><div class="pag-metric-val" style="color:#718096;font-size:11px">${cn.cd_cnae_prin||'—'}</div><div class="pag-metric-lbl">CNAE</div></div>
-      </div>`:''}
+        <div class="pag-metric"><div class="pag-metric-val" style="color:#ed8936">${(parseFloat(cn.score_materialidade_evolucao)||0).toFixed(2)}</div><div class="pag-metric-lbl">Mat. evol.</div></div>
+      </div>
     </div>`;
-  }).join('');
-  document.getElementById('pag-cards').innerHTML=pagCards+(pagsUnicos.length>12?`<div style="font-size:11px;color:#4a5568;text-align:center;padding:8px">+${pagsUnicos.length-12} pagadores não exibidos</div>`:'');
+  }).join('')+(pagsUnicos.length>24?`<div style="font-size:11px;color:#4a5568;text-align:center;padding:12px;grid-column:1/-1">+${pagsUnicos.length-24} pagadores adicionais não exibidos</div>`:'');
 
   // Tabela de boletos
-  document.getElementById('tbl-boletos').innerHTML=boletosFilt.slice(0,80).map(b=>{
+  document.getElementById('tbl-boletos').innerHTML=bolF.slice(0,100).map(b=>{
     const cn=cnpjMap[b.id_pagador];
     const liq=cn?parseFloat(cn.sacado_indice_liquidez_1m)||0:null;
     const atr=cn?parseFloat(cn.media_atraso_dias)||0:null;
+    const inad=cn?parseFloat(cn.share_vl_inad_pag_bol_6_a_15d)||0:null;
     const vlr=parseFloat(b.vlr_nominal)||parseFloat(b.vlr_baixa)||0;
     return`<tr>
-      <td>${b.id_boleto||'—'}</td>
-      <td><b>${b.id_pagador||'—'}</b></td>
-      <td>${b.dt_emissao||'—'}</td>
-      <td>${b.dt_vencimento||'—'}</td>
-      <td>${b.dt_pagamento||'—'}</td>
+      <td title="${b.id_boleto||''}">${b.id_boleto?b.id_boleto.substring(0,18)+'...':'-'}</td>
+      <td><b title="${b.id_pagador||''}">${b.id_pagador?b.id_pagador.substring(0,20)+'...':'-'}</b></td>
+      <td>${b.dt_emissao||'—'}</td><td>${b.dt_vencimento||'—'}</td><td>${b.dt_pagamento||'—'}</td>
       <td style="text-align:right">${vlr?'R$ '+vlr.toLocaleString('pt-BR',{minimumFractionDigits:2}):'—'}</td>
       <td>${b.tipo_baixa||'—'}</td>
       <td style="color:${liq===null?'#4a5568':liq>=1?'#48bb78':'#f56565'}">${liq===null?'—':liq.toFixed(2)}</td>
       <td style="color:${atr===null?'#4a5568':atr>15?'#f56565':atr>7?'#ed8936':'#48bb78'}">${atr===null?'—':atr.toFixed(1)+' d'}</td>
+      <td style="color:${inad===null?'#4a5568':inad>0.2?'#f56565':inad>0.1?'#ed8936':'#48bb78'}">${inad===null?'—':(inad*100).toFixed(1)+'%'}</td>
     </tr>`;
   }).join('');
 
-  // Gráfico liquidez por pagador
+  // Gráfico
   setTimeout(()=>{
-    const ctx=document.getElementById('chart-pag-liq');
-    if(!ctx)return;
-    const top=pagCnpjsFilt.slice(0,8);
-    if(charts.pagLiq)try{charts.pagLiq.destroy()}catch(e){}
-    charts.pagLiq=new Chart(ctx,{
+    const ctx=document.getElementById('chart-liq');if(!ctx)return;
+    if(charts.liq)try{charts.liq.destroy()}catch(e){}
+    const top=pagCnpjsF.slice(0,8);
+    charts.liq=new Chart(ctx,{
       type:'bar',
       data:{
-        labels:top.map(p=>p.id_cnpj),
-        datasets:[{
-          label:'Liquidez sacado 1m',
-          data:top.map(p=>parseFloat(parseFloat(p.sacado_indice_liquidez_1m||0).toFixed(2))),
-          backgroundColor:top.map(p=>{
-            const v=parseFloat(p.sacado_indice_liquidez_1m)||0;
-            return v>=1?'rgba(72,187,120,.7)':v>=0.5?'rgba(237,137,54,.7)':'rgba(245,101,101,.7)';
-          }),
-          borderRadius:4,borderSkipped:false
-        }]
+        labels:top.map(p=>p.id_cnpj.length>20?p.id_cnpj.substring(0,20)+'...':p.id_cnpj),
+        datasets:[{label:'Liquidez 1m',data:top.map(p=>parseFloat((parseFloat(p.sacado_indice_liquidez_1m)||0).toFixed(2))),
+          backgroundColor:top.map(p=>{const v=parseFloat(p.sacado_indice_liquidez_1m)||0;return v>=1?'rgba(72,187,120,.7)':v>=0.5?'rgba(237,137,54,.7)':'rgba(245,101,101,.7)'}),
+          borderRadius:4,borderSkipped:false}]
       },
-      options:{
-        indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
         plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'Liq: '+c.raw.toFixed(2)}}},
-        scales:{
-          x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#718096',font:{size:10}},border:{color:'#2d3748'}},
-          y:{grid:{display:false},ticks:{color:'#a0aec0',font:{size:10}},border:{color:'#2d3748'}}
-        }
-      }
+        scales:{x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#718096',font:{size:10}},border:{color:'#2d3748'}},
+          y:{grid:{display:false},ticks:{color:'#a0aec0',font:{size:10}},border:{color:'#2d3748'}}}}
     });
   },100);
+}
+
+function renderRanking(){
+  const filtro=document.getElementById('sel-parecer')?.value||'';
+  let lista=allCedentes;
+  if(filtro)lista=lista.filter(c=>c.verdict===filtro);
+  document.getElementById('sec-ranking-div').style.display='flex';
+  document.getElementById('sec-ranking').style.display='block';
+  document.getElementById('ranking-count').textContent=`${lista.length} cedentes`;
+  const qtdOk=allCedentes.filter(c=>c.verdict==='ok').length;
+  const qtdCa=allCedentes.filter(c=>c.verdict==='caution').length;
+  const qtdRk=allCedentes.filter(c=>c.verdict==='risk').length;
+  document.getElementById('ranking-list').innerHTML=`
+    <div style="display:flex;gap:16px;margin-bottom:12px;padding:10px;background:#0e1117;border-radius:8px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px"><div style="width:10px;height:10px;border-radius:50%;background:#48bb78"></div><span style="color:#a0aec0">Comprar:</span><b style="color:#48bb78">${qtdOk}</b></div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px"><div style="width:10px;height:10px;border-radius:50%;background:#ed8936"></div><span style="color:#a0aec0">Análise:</span><b style="color:#ed8936">${qtdCa}</b></div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px"><div style="width:10px;height:10px;border-radius:50%;background:#f56565"></div><span style="color:#a0aec0">Não Comprar:</span><b style="color:#f56565">${qtdRk}</b></div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;margin-left:auto"><span style="color:#a0aec0">Total:</span><b style="color:#e2e8f0">${allCedentes.length}</b></div>
+    </div>
+    <div style="max-height:400px;overflow-y:auto;padding-right:4px">
+    ${lista.map((c,i)=>`
+      <div class="ranking-row ${c.id===activeCedente?'active':''}" onclick="selectCedente('${c.id}')">
+        <div class="ranking-num">${i+1}</div>
+        <div class="semaforo sem-${c.verdict}" style="flex-shrink:0"><div class="dot-${c.verdict}"></div>${vLabel(c.verdict)}</div>
+        <div class="ranking-info">
+          <div class="ranking-name" title="${c.id}">${c.id}</div>
+          <div class="ranking-sub">${c.boletos.length} boletos · ${c.pagIds.length} pagadores · ${fmtM(c.vlrTotal)}</div>
+        </div>
+        <div class="ranking-bar-wrap">
+          <div style="font-size:9px;color:#718096;text-align:right;margin-bottom:2px">Score</div>
+          <div class="ranking-bar-track"><div class="ranking-bar-fill" style="width:${c.stats.score}%;background:${vColor(c.verdict)}"></div></div>
+        </div>
+        <div class="ranking-score" style="color:${vColor(c.verdict)}">${c.stats.score}</div>
+      </div>`).join('')}
+    </div>`;
 }
 </script>
 </body>
