@@ -216,24 +216,19 @@ function setStatus(msg,err){const el=document.getElementById('upload-status');el
 function calcScorePagadores(pagCnpjs){
   if(!pagCnpjs.length)return{score:0,liq:0,liqQ:0,inad:0,atraso:0,mat:0,matEvol:0,qtd:0,n:0};
   const avg=f=>pagCnpjs.reduce((s,c)=>s+(parseFloat(c[f])||0),0)/pagCnpjs.length;
-  // Escalas reais conforme dicionário de variáveis:
-  // sacado_indice_liquidez_1m      → 0 a 1 (percentual)
-  // indicador_liquidez_quantitativo_3m → 0 a 1 (percentual)
-  // share_vl_inad_pag_bol_6_a_15d  → 0 a 1 (percentual), menor = melhor
-  // score_materialidade_v2         → 0 a 1000, maior = melhor
-  // media_atraso_dias              → informativo apenas, fora do score
-  const liq=avg('sacado_indice_liquidez_1m');         // 0–1
-  const liqQ=avg('indicador_liquidez_quantitativo_3m'); // 0–1
-  const inad=avg('share_vl_inad_pag_bol_6_a_15d');    // 0–1
-  const atraso=avg('media_atraso_dias');               // informativo
-  const mat=avg('score_materialidade_v2');             // 0–1000
-  const matEvol=avg('score_materialidade_evolucao');   // 0–1000
-  const qtd=avg('score_quantidade_v2');                // 0–1000
+  const liq=avg('sacado_indice_liquidez_1m');
+  const liqQ=avg('indicador_liquidez_quantitativo_3m');
+  const inad=avg('share_vl_inad_pag_bol_6_a_15d');
+  const atraso=avg('media_atraso_dias');
+  const mat=avg('score_materialidade_v2');
+  const matEvol=avg('score_materialidade_evolucao');
+  const qtd=avg('score_quantidade_v2');
   const score=Math.round(
-    liq*100*0.35+                      // liquidez 1m:  0–1 → 0–100, peso 35%
-    liqQ*100*0.25+                     // liquidez 3m:  0–1 → 0–100, peso 25%
-    (1-Math.min(1,inad))*100*0.25+     // inadimplência invertida, peso 25%
-    (mat/1000)*100*0.15                // materialidade v2: 0–1000 → 0–100, peso 15%
+    Math.min(100,(liq/2)*100)*0.30+
+    Math.min(100,(liqQ/2)*100)*0.15+
+    (1-Math.min(1,inad))*100*0.25+
+    (1-Math.min(1,atraso/30))*100*0.20+
+    Math.min(100,mat*100)*0.10
   );
   return{score,liq,liqQ,inad,atraso,mat,matEvol,qtd,n:pagCnpjs.length};
 }
@@ -339,28 +334,28 @@ function renderCedente(){
     <div class="kpi-row">
       <div class="kpi"><div class="kpi-accent" style="background:#0bc5ea"></div>
         <div class="kpi-label">Liquidez média sacado (1m)</div>
-        <div class="kpi-value" style="color:#0bc5ea">${(stats.liq*100).toFixed(1)}%</div>
-        <div class="kpi-sub" style="color:${stats.liq>=0.8?'#48bb78':stats.liq>=0.5?'#ed8936':'#f56565'}">${stats.liq>=0.8?'Dentro do esperado':stats.liq>=0.5?'Atenção':'Abaixo do ideal'}</div>
+        <div class="kpi-value" style="color:#0bc5ea">${fmtN(stats.liq)}</div>
+        <div class="kpi-sub" style="color:${stats.liq>=1?'#48bb78':'#f56565'}">${stats.liq>=1?'Dentro do esperado':'Abaixo do ideal'}</div>
       </div>
       <div class="kpi"><div class="kpi-accent" style="background:#9f7aea"></div>
         <div class="kpi-label">Liq. quantitativa (3m)</div>
-        <div class="kpi-value" style="color:#9f7aea">${(stats.liqQ*100).toFixed(1)}%</div>
-        <div class="kpi-sub" style="color:${stats.liqQ>=0.8?'#48bb78':stats.liqQ>=0.5?'#ed8936':'#f56565'}">${stats.liqQ>=0.8?'Adequada':stats.liqQ>=0.5?'Atenção':'Insuficiente'}</div>
+        <div class="kpi-value" style="color:#9f7aea">${fmtN(stats.liqQ)}</div>
+        <div class="kpi-sub" style="color:${stats.liqQ>=1?'#48bb78':'#f56565'}">${stats.liqQ>=1?'Adequada':'Insuficiente'}</div>
       </div>
       <div class="kpi"><div class="kpi-accent" style="background:#ed8936"></div>
-        <div class="kpi-label">Média de atraso (informativo)</div>
-        <div class="kpi-value" style="color:#ed8936">${fmtN(stats.atraso,1)} dias</div>
-        <div class="kpi-sub" style="color:#718096">Média histórica dos pagadores</div>
+        <div class="kpi-label">Média de atraso</div>
+        <div class="kpi-value" style="color:${stats.atraso>15?'#f56565':stats.atraso>7?'#ed8936':'#48bb78'}">${fmtN(stats.atraso,1)} dias</div>
+        <div class="kpi-sub" style="color:#718096">${stats.atraso>15?'Atenção':stats.atraso>7?'Moderado':'Dentro do limite'}</div>
       </div>
       <div class="kpi"><div class="kpi-accent" style="background:#f56565"></div>
-        <div class="kpi-label">Inad. boletos 6–15 dias</div>
-        <div class="kpi-value" style="color:${stats.inad>0.2?'#f56565':stats.inad>0.1?'#ed8936':'#48bb78'}">${(stats.inad*100).toFixed(1)}%</div>
+        <div class="kpi-label">Inadimplência média</div>
+        <div class="kpi-value" style="color:${stats.inad>0.2?'#f56565':stats.inad>0.1?'#ed8936':'#48bb78'}">${fmtN(stats.inad*100,1)}%</div>
         <div class="kpi-sub" style="color:#718096">${stats.inad>0.2?'Alto risco':stats.inad>0.1?'Moderado':'Baixo risco'}</div>
       </div>
       <div class="kpi"><div class="kpi-accent" style="background:#48bb78"></div>
         <div class="kpi-label">Score materialidade v2</div>
-        <div class="kpi-value" style="color:#48bb78">${Math.round(stats.mat)}</div>
-        <div class="kpi-sub" style="color:#718096">Evolução: ${Math.round(stats.matEvol)} · Qtd: ${Math.round(stats.qtd)}</div>
+        <div class="kpi-value" style="color:#48bb78">${fmtN(stats.mat,2)}</div>
+        <div class="kpi-sub" style="color:#718096">Evolução: ${fmtN(stats.matEvol,2)} · Qtd: ${fmtN(stats.qtd,2)}</div>
       </div>
     </div>
 
@@ -412,11 +407,11 @@ function renderCedente(){
   document.getElementById('pag-grid-content').innerHTML=pagsUnicos.slice(0,24).map(pid=>{
     const cn=cnpjMap[pid];
     if(!cn)return`<div class="pag-card"><div class="pag-header"><div><div class="pag-id">${pid}</div><div class="pag-sub">Sem dados na base de CNPJs</div></div><div class="semaforo" style="background:#1a202c;color:#4a5568;border:1px solid #2d3748">Sem dados</div></div></div>`;
-    const liq=parseFloat(cn.sacado_indice_liquidez_1m)||0;   // 0–1
-    const atr=parseFloat(cn.media_atraso_dias)||0;            // informativo
-    const inad=parseFloat(cn.share_vl_inad_pag_bol_6_a_15d)||0; // 0–1
-    const mat=parseFloat(cn.score_materialidade_v2)||0;       // 0–1000
-    const liqQ=parseFloat(cn.indicador_liquidez_quantitativo_3m)||0; // 0–1
+    const liq=parseFloat(cn.sacado_indice_liquidez_1m)||0;
+    const atr=parseFloat(cn.media_atraso_dias)||0;
+    const inad=parseFloat(cn.share_vl_inad_pag_bol_6_a_15d)||0;
+    const mat=parseFloat(cn.score_materialidade_v2)||0;
+    const liqQ=parseFloat(cn.indicador_liquidez_quantitativo_3m)||0;
     const vp=verdict(calcScorePagadores([cn]).score);
     const nBol=c.boletos.filter(b=>b.id_pagador===pid).length;
     return`<div class="pag-card">
@@ -428,12 +423,12 @@ function renderCedente(){
         <div class="semaforo sem-${vp}" style="flex-shrink:0"><div class="dot-${vp}"></div>${vLabel(vp)}</div>
       </div>
       <div class="pag-metrics">
-        <div class="pag-metric"><div class="pag-metric-val" style="color:${liq>=0.8?'#48bb78':liq>=0.5?'#ed8936':'#f56565'}">${(liq*100).toFixed(1)}%</div><div class="pag-metric-lbl">Liq. 1m</div></div>
-        <div class="pag-metric"><div class="pag-metric-val" style="color:${liqQ>=0.8?'#48bb78':liqQ>=0.5?'#ed8936':'#f56565'}">${(liqQ*100).toFixed(1)}%</div><div class="pag-metric-lbl">Liq. 3m</div></div>
-        <div class="pag-metric"><div class="pag-metric-val" style="color:#ed8936">${atr.toFixed(1)}d</div><div class="pag-metric-lbl">Atraso hist.</div></div>
-        <div class="pag-metric"><div class="pag-metric-val" style="color:${inad>0.2?'#f56565':inad>0.1?'#ed8936':'#48bb78'}">${(inad*100).toFixed(1)}%</div><div class="pag-metric-lbl">Inad. 6–15d</div></div>
-        <div class="pag-metric"><div class="pag-metric-val" style="color:#48bb78">${Math.round(mat)}</div><div class="pag-metric-lbl">Mat. v2</div></div>
-        <div class="pag-metric"><div class="pag-metric-val" style="color:#ed8936">${Math.round(parseFloat(cn.score_materialidade_evolucao)||0)}</div><div class="pag-metric-lbl">Mat. evol.</div></div>
+        <div class="pag-metric"><div class="pag-metric-val" style="color:${liq>=1?'#48bb78':'#f56565'}">${liq.toFixed(2)}</div><div class="pag-metric-lbl">Liq. 1m</div></div>
+        <div class="pag-metric"><div class="pag-metric-val" style="color:${liqQ>=1?'#48bb78':'#f56565'}">${liqQ.toFixed(2)}</div><div class="pag-metric-lbl">Liq. 3m</div></div>
+        <div class="pag-metric"><div class="pag-metric-val" style="color:${atr>15?'#f56565':atr>7?'#ed8936':'#48bb78'}">${atr.toFixed(1)}d</div><div class="pag-metric-lbl">Atraso</div></div>
+        <div class="pag-metric"><div class="pag-metric-val" style="color:${inad>0.2?'#f56565':inad>0.1?'#ed8936':'#48bb78'}">${(inad*100).toFixed(1)}%</div><div class="pag-metric-lbl">Inadimpl.</div></div>
+        <div class="pag-metric"><div class="pag-metric-val" style="color:#48bb78">${mat.toFixed(2)}</div><div class="pag-metric-lbl">Mat. v2</div></div>
+        <div class="pag-metric"><div class="pag-metric-val" style="color:#ed8936">${(parseFloat(cn.score_materialidade_evolucao)||0).toFixed(2)}</div><div class="pag-metric-lbl">Mat. evol.</div></div>
       </div>
     </div>`;
   }).join('')+(pagsUnicos.length>24?`<div style="font-size:11px;color:#4a5568;text-align:center;padding:12px;grid-column:1/-1">+${pagsUnicos.length-24} pagadores adicionais não exibidos</div>`:'');
@@ -466,41 +461,40 @@ function renderCedente(){
   }).join('');
 
   setTimeout(()=>{
-    // Gráfico liquidez por pagador — eixo 0 a 1 (escala real do campo)
-    const ctxL=document.getElementById('chart-liq');if(!ctxL)return;
+    const ctx=document.getElementById('chart-liq');if(!ctx)return;
     if(charts.liq)try{charts.liq.destroy()}catch(e){}
     const top=pagCnpjsF.slice(0,8);
-    charts.liq=new Chart(ctxL,{
+    charts.liq=new Chart(ctx,{
       type:'bar',
       data:{
         labels:top.map(p=>p.id_cnpj.length>20?p.id_cnpj.substring(0,20)+'...':p.id_cnpj),
-        datasets:[{label:'Liquidez 1m',
-          data:top.map(p=>parseFloat((parseFloat(p.sacado_indice_liquidez_1m)||0).toFixed(3))),
-          backgroundColor:top.map(p=>{const v=parseFloat(p.sacado_indice_liquidez_1m)||0;
-            return v>=0.8?'rgba(72,187,120,.7)':v>=0.5?'rgba(237,137,54,.7)':'rgba(245,101,101,.7)'}),
+        datasets:[{label:'Liquidez 1m',data:top.map(p=>parseFloat((parseFloat(p.sacado_indice_liquidez_1m)||0).toFixed(2))),
+          backgroundColor:top.map(p=>{const v=parseFloat(p.sacado_indice_liquidez_1m)||0;return v>=1?'rgba(72,187,120,.7)':v>=0.5?'rgba(237,137,54,.7)':'rgba(245,101,101,.7)'}),
           borderRadius:4,borderSkipped:false}]
       },
       options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'Liq: '+(c.raw*100).toFixed(1)+'%'}}},
-        scales:{
-          x:{min:0,max:1,grid:{color:'rgba(255,255,255,.05)'},
-            ticks:{color:'#718096',font:{size:10},callback:v=>(v*100).toFixed(0)+'%'},
-            border:{color:'#2d3748'}},
-          y:{grid:{display:false},ticks:{color:'#a0aec0',font:{size:10}},border:{color:'#2d3748'}}
-        }
-      }
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'Liq: '+c.raw.toFixed(2)}}},
+        scales:{x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#718096',font:{size:10}},border:{color:'#2d3748'}},
+          y:{grid:{display:false},ticks:{color:'#a0aec0',font:{size:10}},border:{color:'#2d3748'}}}}
     });
 
-    // Gráfico comparativo — normalização correta por escala real de cada campo
     const ctxC=document.getElementById('chart-comp');if(!ctxC)return;
     if(charts.comp)try{charts.comp.destroy()}catch(e){}
     const mediaGeral=calcScorePagadores(allCedentes.flatMap(c=>c.pagCnpjs));
-    const n01=v=>Math.round(v*100);               // 0–1 → 0–100%
-    const n1000=v=>Math.round((v/1000)*100);       // 0–1000 → 0–100%
-    const nInv=v=>Math.round((1-Math.min(1,v))*100); // invertido 0–1
-    const labelsComp=['Liq. sacado (1m)','Liq. quant. (3m)','Inad. (inv.)','Mat. v2','Mat. evol.','Score qtd.'];
-    const dadosCed=[n01(stats.liq),n01(stats.liqQ),nInv(stats.inad),n1000(stats.mat),n1000(stats.matEvol),n1000(stats.qtd)];
-    const dadosMedia=[n01(mediaGeral.liq),n01(mediaGeral.liqQ),nInv(mediaGeral.inad),n1000(mediaGeral.mat),n1000(mediaGeral.matEvol),n1000(mediaGeral.qtd)];
+    const norm=(v,max)=>Math.round(Math.min(100,(v/max)*100));
+    const labelsComp=['Liq. (1m)','Liq. (3m)','Mat. v2','Mat. evol.','Inadimp. (inv.)','Atraso (inv.)'];
+    const dadosCed=[
+      norm(stats.liq,2),norm(stats.liqQ,2),
+      norm(stats.mat,1),norm(stats.matEvol,1),
+      Math.round((1-Math.min(1,stats.inad))*100),
+      Math.round((1-Math.min(1,stats.atraso/30))*100)
+    ];
+    const dadosMedia=[
+      norm(mediaGeral.liq,2),norm(mediaGeral.liqQ,2),
+      norm(mediaGeral.mat,1),norm(mediaGeral.matEvol,1),
+      Math.round((1-Math.min(1,mediaGeral.inad))*100),
+      Math.round((1-Math.min(1,mediaGeral.atraso/30))*100)
+    ];
     charts.comp=new Chart(ctxC,{
       type:'bar',
       data:{
@@ -510,12 +504,12 @@ function renderCedente(){
           {label:'Média geral',data:dadosMedia,backgroundColor:'rgba(136,135,128,.4)',borderRadius:4,borderSkipped:false}
         ]
       },
-      options:{responsive:true,maintainAspectRatio:false,
+      options:{
+        responsive:true,maintainAspectRatio:false,
         plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.raw}%`}}},
         scales:{
           x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#718096',font:{size:10}},border:{color:'#2d3748'}},
-          y:{min:0,max:100,grid:{color:'rgba(255,255,255,.05)'},
-            ticks:{color:'#718096',font:{size:10},callback:v=>v+'%'},border:{color:'#2d3748'}}
+          y:{min:0,max:100,grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#718096',font:{size:10},callback:v=>v+'%'},border:{color:'#2d3748'}}
         }
       }
     });
