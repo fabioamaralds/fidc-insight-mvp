@@ -546,35 +546,6 @@ function renderCedente(){
   },100);
 }
 
-function downloadDashboardImage(){
-  const btn=document.getElementById('btn-dl');
-  if(btn){btn.disabled=true;btn.textContent='⏳ Gerando...';}
-  const kpiRow=document.querySelector('.kpi-row');
-  const chartsRow=document.querySelector('.charts-row');
-  const pagPanel=document.querySelector('#pag-grid-content')?.closest('.panel');
-  const parecer=document.querySelector('.parecer-box');
-  const wrap=document.createElement('div');
-  wrap.style.cssText='position:fixed;left:-9999px;top:0;width:1400px;background:#0e1117;padding:20px;display:flex;flex-direction:column;gap:12px;';
-  [parecer,kpiRow,chartsRow,pagPanel].forEach(el=>{
-    if(el){const clone=el.cloneNode(true);wrap.appendChild(clone);}
-  });
-  document.body.appendChild(wrap);
-  setTimeout(()=>{
-    html2canvas(wrap,{backgroundColor:'#0e1117',scale:2,useCORS:true,logging:false}).then(canvas=>{
-      const link=document.createElement('a');
-      const cedId=(activeCedente||'cedente').substring(0,20).replace(/[^a-zA-Z0-9]/g,'_');
-      link.download='fidc_analise_'+cedId+'_'+new Date().toISOString().slice(0,10)+'.png';
-      link.href=canvas.toDataURL('image/png');
-      link.click();
-      document.body.removeChild(wrap);
-      if(btn){btn.disabled=false;btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Baixar imagem';}
-    }).catch(err=>{
-      console.error(err);
-      document.body.removeChild(wrap);
-      if(btn){btn.disabled=false;btn.textContent='Baixar imagem';}
-    });
-  },300);
-}
 
 function renderRanking(){
   const filtro=document.getElementById('sel-parecer')?.value||'';
