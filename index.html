@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Análise de Risco FIDC</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
 body{background:#0e1117;color:#e2e8f0;min-height:100vh;overflow-x:hidden}
@@ -129,10 +128,6 @@ tr:hover td{background:#1a202c}
 .section-divider span{font-size:11px;font-weight:600;color:#4a5568;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
 .section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:#2d3748}
 
-/* DOWNLOAD BTN */
-.btn-download{display:inline-flex;align-items:center;gap:6px;background:#1a56db;color:#fff;border:none;border-radius:7px;padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer;transition:background .2s,opacity .2s;white-space:nowrap;flex-shrink:0;margin-left:auto}
-.btn-download:hover{background:#1e63f0}
-.btn-download:disabled{opacity:.5;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -176,10 +171,6 @@ tr:hover td{background:#1a202c}
     <option value="caution">Análise adicional</option>
     <option value="risk">Não Comprar</option>
   </select>
-  <button class="btn-download" id="btn-dl" onclick="downloadDashboardImage()" title="Baixar imagem dos gráficos e KPIs">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-    Baixar imagem
-  </button>
 </div>
 
 <div class="body" id="dash-body">
