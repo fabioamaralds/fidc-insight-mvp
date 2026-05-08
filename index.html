@@ -213,24 +213,39 @@ function handleFile(type,input){
 
 function setStatus(msg,err){const el=document.getElementById('upload-status');el.textContent=msg;el.className='upload-status'+(err?' error':'');}
 
-function calcScorePagadores(pagCnpjs){
-  if(!pagCnpjs.length)return{score:0,liq:0,liqQ:0,inad:0,atraso:0,mat:0,matEvol:0,qtd:0,n:0};
-  const avg=f=>pagCnpjs.reduce((s,c)=>s+(parseFloat(c[f])||0),0)/pagCnpjs.length;
-  const liq=avg('sacado_indice_liquidez_1m');
-  const liqQ=avg('indicador_liquidez_quantitativo_3m');
-  const inad=avg('share_vl_inad_pag_bol_6_a_15d');
-  const atraso=avg('media_atraso_dias');
-  const mat=avg('score_materialidade_v2');
-  const matEvol=avg('score_materialidade_evolucao');
-  const qtd=avg('score_quantidade_v2');
-  const score=Math.round(
-    Math.min(100,(liq/2)*100)*0.30+
-    Math.min(100,(liqQ/2)*100)*0.15+
-    (1-Math.min(1,inad))*100*0.25+
-    (1-Math.min(1,atraso/30))*100*0.20+
-    Math.min(100,mat*100)*0.10
+function calcScorePagadores(pagCnpjs) {
+  if(!pagCnpjs.length) return {score:0, liq:0, liqQ:0, inad:0, atraso:0, mat:0, matEvol:0, qtd:0, n:0};
+  
+  const avg = f => pagCnpjs.reduce((s, c) => s + (parseFloat(c[f]) || 0), 0) / pagCnpjs.length;
+  
+  const liq = avg('sacado_indice_liquidez_1m');
+  const liqQ = avg('indicador_liquidez_quantitativo_3m');
+  const inad = avg('share_vl_inad_pag_bol_6_a_15d');
+  const atraso = avg('media_atraso_dias');
+  const mat = avg('score_materialidade_v2');
+  const matEvol = avg('score_materialidade_evolucao');
+  const qtd = avg('score_quantidade_v2');
+
+  // NORMALIZAÇÃO SEGUNDO O DICIONÁRIO:
+  // Liquidez 0 a 1 -> vira 0 a 100%
+  const liqNorm = Math.min(1, liq) * 100;
+  const liqQNorm = Math.min(1, liqQ) * 100;
+  // Inadimplência 0 a 1 -> invertido (1 é ruim, 0 é bom)
+  const inadInv = (1 - Math.min(1, inad)) * 100;
+  // Scores 0 a 1000 -> divide por 10 para virar 0 a 100%
+  const matNorm = (Math.min(1000, mat) / 10);
+  // Atraso: como bons clientes podem ter valores altos, reduzimos o peso ou aumentamos a tolerância
+  const atrasoNorm = (1 - Math.min(1, atraso / 45)) * 100; 
+
+  const score = Math.round(
+    liqNorm * 0.30 +
+    liqQNorm * 0.15 +
+    inadInv * 0.25 +
+    atrasoNorm * 0.20 +
+    matNorm * 0.10
   );
-  return{score,liq,liqQ,inad,atraso,mat,matEvol,qtd,n:pagCnpjs.length};
+
+  return {score, liq, liqQ, inad, atraso, mat, matEvol, qtd, n: pagCnpjs.length};
 }
 
 function verdict(score){return score>=65?'ok':score>=40?'caution':'risk'}
@@ -335,7 +350,7 @@ function renderCedente(){
       <div class="kpi"><div class="kpi-accent" style="background:#0bc5ea"></div>
         <div class="kpi-label">Liquidez média sacado (1m)</div>
         <div class="kpi-value" style="color:#0bc5ea">${fmtN(stats.liq)}</div>
-        <div class="kpi-sub" style="color:${stats.liq>=1?'#48bb78':'#f56565'}">${stats.liq>=1?'Dentro do esperado':'Abaixo do ideal'}</div>
+        <div class="kpi-sub" style="color:${stats.liq >= 0.7 ? '#48bb78':'#f56565'}">${stats.liq >= 0.7 ? 'Dentro do esperado':'Abaixo do ideal'}</div>
       </div>
       <div class="kpi"><div class="kpi-accent" style="background:#9f7aea"></div>
         <div class="kpi-label">Liq. quantitativa (3m)</div>
@@ -483,17 +498,24 @@ function renderCedente(){
     const mediaGeral=calcScorePagadores(allCedentes.flatMap(c=>c.pagCnpjs));
     const norm=(v,max)=>Math.round(Math.min(100,(v/max)*100));
     const labelsComp=['Liq. (1m)','Liq. (3m)','Mat. v2','Mat. evol.','Inadimp. (inv.)','Atraso (inv.)'];
-    const dadosCed=[
-      norm(stats.liq,2),norm(stats.liqQ,2),
-      norm(stats.mat,1),norm(stats.matEvol,1),
-      Math.round((1-Math.min(1,stats.inad))*100),
-      Math.round((1-Math.min(1,stats.atraso/30))*100)
+    const normScore = (v) => Math.round((v / 1000) * 100);
+    const normLiq = (v) => Math.round(v * 100);
+
+    const dadosCed = [
+      normLiq(stats.liq),             // Liquidez 1m
+      normLiq(stats.liqQ),            // Liquidez 3m
+      normScore(stats.mat),           // Materialidade v2 (0-1000)
+      normScore(stats.matEvol),       // Materialidade Evol (0-1000)
+      Math.round((1 - Math.min(1, stats.inad)) * 100),
+      Math.round((1 - Math.min(1, stats.atraso / 45)) * 100)
     ];
-    const dadosMedia=[
-      norm(mediaGeral.liq,2),norm(mediaGeral.liqQ,2),
-      norm(mediaGeral.mat,1),norm(mediaGeral.matEvol,1),
-      Math.round((1-Math.min(1,mediaGeral.inad))*100),
-      Math.round((1-Math.min(1,mediaGeral.atraso/30))*100)
+    const dadosMedia = [
+      normLiq(mediaGeral.liq),
+      normLiq(mediaGeral.liqQ),
+      normScore(mediaGeral.mat),
+      normScore(mediaGeral.matEvol),
+      Math.round((1 - Math.min(1, mediaGeral.inad)) * 100),
+      Math.round((1 - Math.min(1, mediaGeral.atraso / 45)) * 100)
     ];
     charts.comp=new Chart(ctxC,{
       type:'bar',
